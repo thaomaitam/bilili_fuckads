@@ -37,7 +37,8 @@ public class HookAD {
         XposedBridge.hookMethod(new DexMethod(BaseSplash).getMethodInstance(loadPackageParam.classLoader), new XC_MethodHook() {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                Object newSplash = b.newInstance();
+                Object newSplash = param.args[0];
+                XposedHelpers.setIntField(newSplash, "duration", -1000);
                 param.args[0] = newSplash;
                 super.beforeHookedMethod(param);
             }
