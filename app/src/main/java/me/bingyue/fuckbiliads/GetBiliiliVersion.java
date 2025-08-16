@@ -1,19 +1,20 @@
 package me.bingyue.fuckbiliads;
 
-import java.io.File;
+import android.content.Context;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 
-import de.robv.android.xposed.XposedHelpers;
-import de.robv.android.xposed.callbacks.XC_LoadPackage;
+
+import de.robv.android.xposed.XposedBridge;
 
 public class GetBiliiliVersion {
-    public static int B(XC_LoadPackage.LoadPackageParam lpparam) {
+    public static int B(Context context, String packageName) {
         try {
-            Class<?> parserCls = XposedHelpers.findClass("android.content.pm.PackageParser", lpparam.classLoader);
-            Object parser = parserCls.newInstance();
-            File apkPath = new File(lpparam.appInfo.sourceDir);
-            Object pkg = XposedHelpers.callMethod(parser, "parsePackage", apkPath, 0);
-            return XposedHelpers.getIntField(pkg, "mVersionCode");
-        } catch (Throwable e) {
+            PackageManager packageManager = context.getPackageManager();
+            PackageInfo packageInfo = packageManager.getPackageInfo(packageName, 0);
+            return packageInfo.versionCode;
+        } catch (Exception e) {
+            XposedBridge.log("获取软件版本号失败：" + e.getMessage());
             return 0;
         }
     }
